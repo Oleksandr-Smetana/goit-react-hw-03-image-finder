@@ -9,21 +9,20 @@ import ImageGallery from './components/ImageGallery';
 
 class App extends Component {
   state = {
-    imageName: '',
+    imageQuery: '',
   };
 
-  handleFormSubmit = imageName => {
-    // console.log(imageName);
-    this.setState({ imageName });
+  handleFormSubmit = imageQuery => {
+    // console.log(imageQuery);
+    this.setState({ imageQuery });
   };
 
   render() {
     return (
       <div className={s.App}>
         <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery imageName={this.state.imageName} />
+        <ImageGallery imageQuery={this.state.imageQuery} />
         {/* <Loader /> */}
-        {/* <Button /> */}
         {/* <Modal /> */}
         <ToastContainer autoClose={2500} theme="colored" />
       </div>
