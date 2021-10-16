@@ -5,6 +5,7 @@ export default function ImageGalleryItem({
   tags,
   smallImage,
   largeImage,
+  openModal,
 }) {
   return (
     <li className={s.ImageGalleryItem}>
@@ -13,6 +14,7 @@ export default function ImageGalleryItem({
         alt={tags}
         src={smallImage}
         data-source={largeImage}
+        onClick={openModal}
       />
     </li>
   );

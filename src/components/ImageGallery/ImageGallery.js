@@ -1,14 +1,20 @@
 import { Component } from 'react';
+import { toast } from 'react-toastify';
 import s from './ImageGallery.module.css';
 import fetchImages from '../../apiServises/PixabayAPI';
 import ImageGalleryItem from '../ImageGalleryItem/';
+import Loader from '../Loader/Loader';
 import Button from '../Button/Button';
+import Modal from '../Modal/Modal';
 
 export default class ImageGallery extends Component {
   state = {
     images: [],
     page: 1,
     status: 'idle',
+    moreButton: false,
+    showModal: false,
+    modalContent: { url: null, alt: null },
     error: null,
   };
 
@@ -25,14 +31,51 @@ export default class ImageGallery extends Component {
       fetchImages(imageQuery, page)
         .then(data => {
           this.setState({
-            images: [...images, ...data.hits],
             status: 'resolved',
+            moreButton: true,
           });
+          // console.log(data.totalHits);
+          // console.log(images.length);
+
+          if (prevProps.imageQuery !== imageQuery) {
+            this.setState({
+              images: data.hits,
+              page: 1,
+            });
+          } else {
+            if (page === 1) {
+              this.setState({ images: data.hits });
+            } else {
+              this.setState({
+                images: [...images, ...data.hits],
+              });
+              if (
+                data.totalHits ===
+                images.length + data.hits.length
+              ) {
+                this.setState({
+                  moreButton: false,
+                });
+                return toast.success(
+                  `All images with query "${imageQuery}" were downloaded.`,
+                  {
+                    position: 'bottom-right',
+                    autoClose: 4000,
+                  },
+                  this.scrollToEndPage(),
+                );
+              }
+              // console`.log(images.length + data.hits.length);
+
+              this.scrollToEndPage();
+            }
+          }
         })
         .catch(error =>
           this.setState({
-            error: error,
+            error,
             status: 'rejected',
+            moreButton: false,
           }),
         );
     }
@@ -44,38 +87,54 @@ export default class ImageGallery extends Component {
     }));
   };
 
-  // scrollToEndPage = () => {
-  //   return window.scrollTo({
-  //     top: document.documentElement.scrollHeight,
-  //     behavior: 'smooth',
-  //   });
-  // };
+  scrollToEndPage = () => {
+    return window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: 'smooth',
+    });
+  };
 
-  // .then(images => {
-  //           if (page === 1) {
-  //             this.setState({ images, status: 'resolved' });
-  //           }
-  //           if (page < 1) {
-  //             this.setState(prevState => [
-  //               ...prevState.images,
-  //               ...images,
-  //             ]);
-  //           }
-  //         })
+  closeModal = () => {
+    this.setState(({ showModal, modalContent }) => ({
+      showModal: false,
+      modalContent: { url: null, alt: null },
+    }));
+  };
+
+  openModal = e => {
+    this.setState(({ showModal, modalContent }) => ({
+      showModal: true,
+      modalContent: {
+        alt: e.target.alt,
+        url: e.target.dataset.source,
+      },
+    }));
+  };
 
   render() {
-    const { images, error, status } = this.state;
+    const {
+      images,
+      status,
+      moreButton,
+      showModal,
+      modalContent: { url, alt },
+      error,
+    } = this.state;
 
     if (status === 'idle') {
-      return <div>What are we looking for?</div>;
+      return (
+        <h2 className={s.message}>
+          What are we looking for?
+        </h2>
+      );
     }
 
     if (status === 'pending') {
-      return <div>Loading...</div>;
+      return <Loader />;
     }
 
     if (status === 'rejected') {
-      return <div>{error.message}</div>;
+      return <h2 className={s.message}>{error.message}</h2>;
     }
 
     if (status === 'resolved') {
@@ -88,11 +147,21 @@ export default class ImageGallery extends Component {
                 tags={image.tags}
                 smallImage={image.webformatURL}
                 largeImage={image.largeImageURL}
+                openModal={this.openModal}
               />
             ))}
           </ul>
-
-          <Button onClick={this.incrementPageNumber} />
+          {moreButton && (
+            <Button onClick={this.incrementPageNumber} />
+          )}
+          {showModal && (
+            <Modal
+              closeModal={this.closeModal}
+              openModal={this.openModal}
+              url={url}
+              alt={alt}
+            />
+          )}
         </>
       );
     }

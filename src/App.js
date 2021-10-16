@@ -22,8 +22,6 @@ class App extends Component {
       <div className={s.App}>
         <Searchbar onSubmit={this.handleFormSubmit} />
         <ImageGallery imageQuery={this.state.imageQuery} />
-        {/* <Loader /> */}
-        {/* <Modal /> */}
         <ToastContainer autoClose={2500} theme="colored" />
       </div>
     );

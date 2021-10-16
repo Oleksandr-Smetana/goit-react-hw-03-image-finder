@@ -13,3 +13,8 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+.message {
+  margin: 30px auto;
+  color: #3f51b5;
+}
