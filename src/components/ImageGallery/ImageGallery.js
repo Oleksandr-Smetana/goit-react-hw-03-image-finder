@@ -1,5 +1,7 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
+
 import s from './ImageGallery.module.css';
 import fetchImages from '../../apiServises/PixabayAPI';
 import ImageGalleryItem from '../ImageGalleryItem/';
@@ -8,6 +10,10 @@ import Button from '../Button/Button';
 import Modal from '../Modal/Modal';
 
 export default class ImageGallery extends Component {
+  static propTypes = {
+    imageQuery: PropTypes.string.isRequired,
+  };
+
   state = {
     images: [],
     page: 1,
@@ -21,6 +27,7 @@ export default class ImageGallery extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { imageQuery } = this.props;
     const { page, images } = this.state;
+    // console.log('gal: ', this.props);
 
     if (
       prevProps.imageQuery !== imageQuery ||
@@ -65,7 +72,7 @@ export default class ImageGallery extends Component {
                   this.scrollToEndPage(),
                 );
               }
-              // console`.log(images.length + data.hits.length);
+              // console.log(images.length + data.hits.length);
 
               this.scrollToEndPage();
             }
@@ -157,7 +164,6 @@ export default class ImageGallery extends Component {
           {showModal && (
             <Modal
               closeModal={this.closeModal}
-              openModal={this.openModal}
               url={url}
               alt={alt}
             />

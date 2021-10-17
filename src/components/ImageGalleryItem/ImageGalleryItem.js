@@ -1,4 +1,5 @@
 // import { Component } from 'react';
+import PropTypes from 'prop-types';
 import s from './ImageGalleryItem.module.css';
 
 export default function ImageGalleryItem({
@@ -19,3 +20,10 @@ export default function ImageGalleryItem({
     </li>
   );
 }
+
+ImageGalleryItem.propTypes = {
+  tags: PropTypes.string.isRequired,
+  smallImage: PropTypes.string.isRequired,
+  largeImage: PropTypes.string.isRequired,
+  openModal: PropTypes.func.isRequired,
+};

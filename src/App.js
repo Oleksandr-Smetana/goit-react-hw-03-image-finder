@@ -1,9 +1,8 @@
 import { Component } from 'react';
-import s from './App.module.css';
-
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import s from './App.module.css';
 import Searchbar from './components/Searchbar';
 import ImageGallery from './components/ImageGallery';
 
@@ -13,7 +12,7 @@ class App extends Component {
   };
 
   handleFormSubmit = imageQuery => {
-    // console.log(imageQuery);
+    // console.log('app: ', this.props);
     this.setState({ imageQuery });
   };
 
