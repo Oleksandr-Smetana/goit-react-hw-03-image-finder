@@ -39,16 +39,27 @@ export default class ImageGallery extends Component {
         .then(data => {
           this.setState({
             status: 'resolved',
-            moreButton: true,
           });
           // console.log(data.totalHits);
           // console.log(images.length);
 
           if (prevProps.imageQuery !== imageQuery) {
-            this.setState({
-              images: data.hits,
-              page: 1,
-            });
+            if (data.hits.length === 0) {
+              this.setState({
+                images: [],
+                page: 1,
+                moreButton: false,
+              });
+              return toast.error(
+                `No images with query: "${imageQuery}".`,
+              );
+            } else {
+              this.setState({
+                images: data.hits,
+                page: 1,
+                moreButton: true,
+              });
+            }
           } else {
             if (page === 1) {
               this.setState({ images: data.hits });
@@ -65,10 +76,6 @@ export default class ImageGallery extends Component {
                 });
                 return toast.success(
                   `All images with query "${imageQuery}" were downloaded.`,
-                  {
-                    position: 'bottom-right',
-                    autoClose: 4000,
-                  },
                   this.scrollToEndPage(),
                 );
               }
